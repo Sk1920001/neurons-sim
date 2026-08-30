@@ -22,3 +22,10 @@ def neuron_kernel(p, l, v):
         )
 
     return k
+
+
+def sigmoid(max_value, min_value, gain, offset):
+    def s(t):
+        return min_value + 2 * (max_value - min_value) / (1 + np.exp(-gain * (t - offset)))
+
+    return s
