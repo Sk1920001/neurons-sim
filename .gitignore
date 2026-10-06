@@ -2,4 +2,6 @@
 *.env/
 __pycache__/
 *.env
+escritura_tesis/
+.DS_Store
 

@@ -1,4 +1,7 @@
 import numpy as np
+import random 
+import math
+from scipy.stats import poisson
 
 def normal_pdf(t, sigma):
     return (
@@ -29,3 +32,23 @@ def sigmoid(max_value, min_value, gain, offset):
         return min_value + 2 * (max_value - min_value) / (1 + np.exp(-gain * (t - offset)))
 
     return s
+
+
+def generarte_poisson_process(rate):
+    prob = random.random() #U(0,1)
+    cont = 0
+    sum = 0
+    while True:
+        sum +=  poisson.pmf(cont, rate)
+        if sum >= prob:
+            return cont
+        cont+=1
+
+def generate_arrivals_poisson(num,max_time):
+    times= np.zeros(num)
+    for i in range(num):
+        times[i] = np.random.uniform(0,max_time)
+    times.sort()
+    return times
+
+

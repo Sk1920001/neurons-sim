@@ -1,5 +1,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
+from functions import generate_arrivals_poisson,generarte_poisson_process
+import random 
 
 class Function:
     def __init__(self, x_values=np.arange(0, 10, 0.01), functions = [(1, lambda x: 1)]) :   #The first value of the tuple is the length of the interval, the second value is the function to be applied in that interval
@@ -63,24 +65,32 @@ class Convolution:
         plt.close()
 
 class PoissonProcess:
-    def __init__(self, rate_values , x_values ):
+    def __init__(self, rate_values , max_time, time_delta):
+        self.time_delta = time_delta
         self.rate_values = rate_values 
-        self.x_values = x_values
-        self.y_values = np.arange(0, 1, 0.1)
+        self.rate_sup = np.max(rate_values)
+        self.initial_events = generarte_poisson_process(rate=self.rate_sup * max_time)
+        self.initial_arrivals = generate_arrivals_poisson(num=self.initial_events, max_time=max_time)
+        self.accepted_arrivals = [] 
         self.evaluate()
 
     def evaluate(self):
         # Generate Poisson process based on the rate function
-        y_values = np.random.poisson(self.rate_values[: self.x_values.shape[0]] * (self.x_values[1] - self.x_values[0]))
-        mask = y_values > 0
-        self.x_values = self.x_values[mask]
-        self.y_values = y_values[mask]
+        for i in range(self.initial_arrivals.shape[0]):
+            U = random.random()
+            time_index = round(self.initial_arrivals[i]/self.time_delta)
+            if U <= self.rate_values[time_index]/self.rate_sup :  #Uniform(0,1) CDF
+                self.accepted_arrivals.append(self.initial_arrivals[i])
+        self.accepted_arrivals = np.array(self.accepted_arrivals)
+
+
+
 
     def graph(self, title="Poisson Process", x_label="Time", y_label="Count", color='blue'):
-        plt.scatter(self.x_values, self.y_values, c=color)
+        plt.scatter(self.accepted_arrivals , np.zeros_like(self.accepted_arrivals), c=color)
         plt.title(title)
         plt.xlabel(x_label)
-        plt.ylabel(y_label)
+        plt.yticks([])
 
         plt.show()
         plt.close()

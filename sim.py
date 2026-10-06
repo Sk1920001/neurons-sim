@@ -20,8 +20,6 @@ def main():
                 ]
 
     stimulus = Function(functions=functions, x_values=x_values)
-    #stimulus.graph()
-
     # ON-fast-sustained
     p = 1
     l = 0.4
