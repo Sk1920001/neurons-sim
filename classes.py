@@ -34,13 +34,14 @@ class Function:
         plt.close()
 
 class Convolution:
-    def __init__(self, function1, function2, delta_t=0.01, min_max=False):
+    def __init__(self, function1, function2, delta_t=0.01, min_max=False, max_time=-1):
         self.function1 = function1
         self.function2 = function2
         self.delta_t = delta_t
         self.x_values = np.arange(0, 1, 0.1)
         self.y_values = np.arange(0, 1, 0.1)
         self.min_max = min_max
+        self.max_time = max_time
         self.evaluate()
 
 
@@ -48,11 +49,16 @@ class Convolution:
         y_values = np.convolve(self.function1.y_values, self.function2.y_values) * self.delta_t 
         self.x_values = np.arange(y_values.shape[0]) * self.delta_t 
 
+
+        if self.max_time <= 0 :
+            self.y_values = y_values[: self.x_values.shape[0]]
+        else:
+            self.x_values = self.x_values[: (self.max_time/self.delta_t)]
+            self.y_values = y_values[: self.x_values.shape[0]]
+
+
         if self.min_max:
             self.y_values = ((y_values - np.min(y_values)) / (np.max(y_values) - np.min(y_values))) * 2 - 1
-            return
-
-        self.y_values = y_values[: self.x_values.shape[0]]
 
 
     def graph(self, title="Convolution", x_label="Time", y_label="Amplitude", color='blue'):
